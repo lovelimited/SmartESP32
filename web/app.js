@@ -271,17 +271,41 @@ window.deleteScheduleSlot = function(relayKey, index) {
 
 // Save Full Schedule to Firebase
 function saveScheduleToFirebase() {
-    set(ref(db, "smartgarden/schedule"), currentSchedule)
+    // Make sure we pass at least an empty array or object so Firebase doesn't completely lose the child structure unexpectedly
+    const dataToSave = {
+        relay1: currentSchedule.relay1.length > 0 ? currentSchedule.relay1 : [],
+        relay2: currentSchedule.relay2.length > 0 ? currentSchedule.relay2 : []
+    };
+    
+    set(ref(db, "smartgarden/schedule"), dataToSave)
         .then(() => showToast("อัปเดตตารางเวลาเรียบร้อย"))
         .catch(err => showToast("บันทึกไม่สำเร็จ: " + err.message));
 }
 
 // Modal Handlers
+function populateTimeSelects() {
+    const hours = Array.from({length: 24}, (_, i) => i.toString().padStart(2, '0'));
+    const minutes = Array.from({length: 60}, (_, i) => i.toString().padStart(2, '0'));
+    
+    const hOptions = hours.map(h => `<option value="${h}">${h}</option>`).join('');
+    const mOptions = minutes.map(m => `<option value="${m}">${m}</option>`).join('');
+    
+    document.getElementById('startHour').innerHTML = hOptions;
+    document.getElementById('stopHour').innerHTML = hOptions;
+    document.getElementById('startMinute').innerHTML = mOptions;
+    document.getElementById('stopMinute').innerHTML = mOptions;
+}
+
+// Call once
+populateTimeSelects();
+
 window.openAddModal = function(relayKey) {
     document.getElementById("modalTitle").textContent = "เพิ่มตารางเวลาใหม่";
     document.getElementById("modalTargetRelay").value = relayKey;
     document.getElementById("modalEditIndex").value = "-1";
-    document.getElementById("startTime").value = "08:00";
+    
+    document.getElementById("startHour").value = "08";
+    document.getElementById("startMinute").value = "00";
     document.getElementById("slotEnable").checked = true;
 
     // Toggle fields based on relay type
@@ -292,7 +316,8 @@ window.openAddModal = function(relayKey) {
     } else { // Fountain uses stop time
         document.getElementById("durationGroup").style.display = "none";
         document.getElementById("stopTimeGroup").style.display = "block";
-        document.getElementById("stopTime").value = "08:30";
+        document.getElementById("stopHour").value = "08";
+        document.getElementById("stopMinute").value = "30";
     }
 
     document.getElementById("scheduleModal").classList.add("active");
@@ -305,7 +330,11 @@ window.openEditModal = function(relayKey, index) {
     document.getElementById("modalTitle").textContent = "แก้ไขตารางเวลา";
     document.getElementById("modalTargetRelay").value = relayKey;
     document.getElementById("modalEditIndex").value = index;
-    document.getElementById("startTime").value = minuteToTimeString(slot.start);
+    
+    const startStr = minuteToTimeString(slot.start);
+    document.getElementById("startHour").value = startStr.split(':')[0];
+    document.getElementById("startMinute").value = startStr.split(':')[1];
+    
     document.getElementById("slotEnable").checked = slot.enable !== false;
 
     if (relayKey === "relay2" || slot.duration !== undefined) {
@@ -315,7 +344,10 @@ window.openEditModal = function(relayKey, index) {
     } else {
         document.getElementById("durationGroup").style.display = "none";
         document.getElementById("stopTimeGroup").style.display = "block";
-        document.getElementById("stopTime").value = minuteToTimeString(slot.stop || (slot.start + 30));
+        
+        const stopStr = minuteToTimeString(slot.stop || (slot.start + 30));
+        document.getElementById("stopHour").value = stopStr.split(':')[0];
+        document.getElementById("stopMinute").value = stopStr.split(':')[1];
     }
 
     document.getElementById("scheduleModal").classList.add("active");
@@ -328,13 +360,12 @@ window.closeModal = function() {
 window.saveScheduleSlot = function() {
     const relayKey = document.getElementById("modalTargetRelay").value;
     const index = parseInt(document.getElementById("modalEditIndex").value, 10);
-    const startTimeStr = document.getElementById("startTime").value;
+    
+    const startH = document.getElementById("startHour").value;
+    const startM = document.getElementById("startMinute").value;
+    const startTimeStr = `${startH}:${startM}`;
+    
     const isEnable = document.getElementById("slotEnable").checked;
-
-    if (!startTimeStr) {
-        alert("กรุณาระบุเวลาเริ่มต้น");
-        return;
-    }
 
     const startMin = timeStringToMinutes(startTimeStr);
 
@@ -347,11 +378,10 @@ window.saveScheduleSlot = function() {
         const duration = parseInt(document.getElementById("durationMin").value, 10) || 10;
         newSlot.duration = duration;
     } else {
-        const stopTimeStr = document.getElementById("stopTime").value;
-        if (!stopTimeStr) {
-            alert("กรุณาระบุเวลาสิ้นสุด");
-            return;
-        }
+        const stopH = document.getElementById("stopHour").value;
+        const stopM = document.getElementById("stopMinute").value;
+        const stopTimeStr = `${stopH}:${stopM}`;
+        
         const stopMin = timeStringToMinutes(stopTimeStr);
         if (stopMin <= startMin) {
             alert("เวลาสิ้นสุดต้องมากกว่าเวลาเริ่มต้น");

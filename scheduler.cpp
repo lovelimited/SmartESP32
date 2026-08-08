@@ -499,7 +499,7 @@ void schedulerLoop()
     if(relay1Mode == MODE_AUTO)
     {
 
-        if(fountain != schedulerFountainState)
+        if(fountain != relay1State())
         {
 
             schedulerFountainState=fountain;
@@ -539,7 +539,7 @@ void schedulerLoop()
     if(relay2Mode == MODE_AUTO)
     {
 
-        if(watering != schedulerWateringState)
+        if(watering != relay2State())
         {
 
             schedulerWateringState=watering;
