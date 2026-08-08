@@ -89,6 +89,9 @@ void setup()
 
   connectWiFi();
 
+  // NTP
+  ntpBegin();
+
   // LittleFS
   if(!LittleFS.begin())
   {
