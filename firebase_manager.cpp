@@ -9,6 +9,7 @@
 #include "scheduler.h"
 #include "relay_control.h"
 #include "relay.h"
+#include "config.h"
 
 
 // =====================================================
