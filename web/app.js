@@ -113,8 +113,9 @@ function listenToDatabase() {
     onValue(scheduleRef, (snapshot) => {
         const val = snapshot.val();
         if (val) {
-            currentSchedule.relay1 = Array.isArray(val.relay1) ? val.relay1 : [];
-            currentSchedule.relay2 = Array.isArray(val.relay2) ? val.relay2 : [];
+            // Firebase might return objects instead of arrays if keys are missing
+            currentSchedule.relay1 = Array.isArray(val.relay1) ? val.relay1 : (val.relay1 ? Object.values(val.relay1) : []);
+            currentSchedule.relay2 = Array.isArray(val.relay2) ? val.relay2 : (val.relay2 ? Object.values(val.relay2) : []);
             renderSchedules();
         } else {
             currentSchedule = { relay1: [], relay2: [] };
@@ -263,10 +264,24 @@ window.toggleSlotEnable = function(relayKey, index, enabled) {
 
 // Delete Slot
 window.deleteScheduleSlot = function(relayKey, index) {
-    if (confirm("คุณต้องการลบตารางเวลานี้ใช่หรือไม่?")) {
-        currentSchedule[relayKey].splice(index, 1);
-        saveScheduleToFirebase();
-    }
+    Swal.fire({
+        title: 'ยืนยันการลบ',
+        text: "คุณต้องการลบตารางเวลานี้ใช่หรือไม่?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ef4444',
+        cancelButtonColor: '#9ca3af',
+        confirmButtonText: 'ใช่, ลบเลย!',
+        cancelButtonText: 'ยกเลิก'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Check if array exists and is array before splicing
+            if (Array.isArray(currentSchedule[relayKey])) {
+                currentSchedule[relayKey].splice(index, 1);
+                saveScheduleToFirebase();
+            }
+        }
+    });
 };
 
 // Save Full Schedule to Firebase
@@ -384,10 +399,19 @@ window.saveScheduleSlot = function() {
         
         const stopMin = timeStringToMinutes(stopTimeStr);
         if (stopMin <= startMin) {
-            alert("เวลาสิ้นสุดต้องมากกว่าเวลาเริ่มต้น");
+            Swal.fire({
+                icon: 'error',
+                title: 'เวลาไม่ถูกต้อง',
+                text: 'เวลาสิ้นสุดต้องมากกว่าเวลาเริ่มต้น'
+            });
             return;
         }
         newSlot.stop = stopMin;
+    }
+
+    // Ensure it's an array
+    if (!Array.isArray(currentSchedule[relayKey])) {
+        currentSchedule[relayKey] = [];
     }
 
     if (index === -1) {
