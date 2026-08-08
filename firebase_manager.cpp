@@ -36,8 +36,9 @@ bool firebaseAuthenticated = false;
 // =====================================================
 
 unsigned long lastFirebaseSync = 0;
-
 const unsigned long FIREBASE_SYNC_INTERVAL = 5000;
+
+unsigned long lastHeartbeat = 0;
 
 
 // =====================================================
@@ -333,6 +334,12 @@ void firebaseLoop()
     // -----------------------------------------
     // Sync interval
     // -----------------------------------------
+
+    if (millis() - lastHeartbeat >= HEARTBEAT_INTERVAL || lastHeartbeat == 0)
+    {
+        lastHeartbeat = millis();
+        Firebase.RTDB.setTimestamp(&fbdo, "/smartgarden/status/last_update");
+    }
 
     if (
         millis() - lastFirebaseSync <

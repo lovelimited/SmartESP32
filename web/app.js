@@ -41,14 +41,27 @@ let currentSettings = {
     relay2_mode: "AUTO"
 };
 
+let esp32LastSeen = 0;
+let isFirebaseConnected = false;
+
 // DOM Elements
 const connectionStatusEl = document.getElementById("connectionStatus");
 const currentTimeEl = document.getElementById("currentTime");
 
-// Clock update
+// Clock update and ESP32 Status check
 setInterval(() => {
     const now = new Date();
     currentTimeEl.textContent = now.toLocaleTimeString("th-TH", { hour12: false });
+
+    // Check ESP32 Status if Firebase is connected
+    if (isFirebaseConnected) {
+        const timeDiff = Date.now() - esp32LastSeen;
+        if (esp32LastSeen === 0 || timeDiff > 60000) { // 60 seconds timeout
+            updateConnectionStatus(false, "ESP32 ขาดการเชื่อมต่อ");
+        } else {
+            updateConnectionStatus(true, "เชื่อมต่อระบบแล้ว");
+        }
+    }
 }, 1000);
 
 // Anonymous Auth
@@ -59,23 +72,25 @@ signInAnonymously(auth).catch((error) => {
 
 onAuthStateChanged(auth, (user) => {
     if (user) {
-        updateConnectionStatus(true);
+        isFirebaseConnected = true;
+        updateConnectionStatus(false, "กำลังค้นหา ESP32...");
         listenToDatabase();
     } else {
-        updateConnectionStatus(false);
+        isFirebaseConnected = false;
+        updateConnectionStatus(false, "Web ขาดการเชื่อมต่อ Firebase");
     }
 });
 
-function updateConnectionStatus(isOnline) {
+function updateConnectionStatus(isOnline, message) {
     if (isOnline) {
         connectionStatusEl.innerHTML = `
             <span class="status-dot online"></span>
-            <span class="status-text">เชื่อมต่อระบบแล้ว</span>
+            <span class="status-text">${message}</span>
         `;
     } else {
         connectionStatusEl.innerHTML = `
             <span class="status-dot offline"></span>
-            <span class="status-text">ขาดการเชื่อมต่อ</span>
+            <span class="status-text">${message}</span>
         `;
     }
 }
@@ -104,6 +119,14 @@ function listenToDatabase() {
         } else {
             currentSchedule = { relay1: [], relay2: [] };
             renderSchedules();
+        }
+    });
+
+    // 3. Heartbeat listener
+    const statusRef = ref(db, "smartgarden/status/last_update");
+    onValue(statusRef, (snapshot) => {
+        if (snapshot.exists()) {
+            esp32LastSeen = snapshot.val();
         }
     });
 }
