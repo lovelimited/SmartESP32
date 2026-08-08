@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Smart Garden V2 - ระบบรดน้ำและน้ำพุอัจฉริยะ</title>
     
+    <!-- PWA Meta Tags -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#34d399">
+    <link rel="apple-touch-icon" href="icon.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="SmartGarden">
+    
     <!-- Google Fonts: Prompt & Outfit -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -20,7 +28,20 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="app-container">
+    <!-- PIN Overlay -->
+    <div id="pinOverlay" class="pin-overlay">
+        <div class="pin-container">
+            <div class="pin-icon">
+                <i class="fa-solid fa-lock"></i>
+            </div>
+            <h2>กรุณาใส่รหัสผ่าน</h2>
+            <p>เพื่อเข้าถึงระบบควบคุม</p>
+            <input type="password" id="pinInput" class="pin-input" maxlength="6" placeholder="------" pattern="[0-9]*" inputmode="numeric">
+            <button id="btnPinSubmit" class="btn-pin">เข้าสู่ระบบ</button>
+        </div>
+    </div>
+
+    <div class="app-container" id="appContainer" style="display: none;">
         <!-- Header -->
         <header class="app-header">
             <div class="header-top">

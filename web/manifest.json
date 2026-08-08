@@ -1,0 +1,17 @@
+{
+  "name": "Smart Garden V2",
+  "short_name": "SmartGarden",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#fdfbfb",
+  "theme_color": "#34d399",
+  "description": "ระบบควบคุมรดน้ำและน้ำพุอัจฉริยะ",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "192x192 512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

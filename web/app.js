@@ -435,6 +435,60 @@ window.saveScheduleSlot = function() {
     closeModal();
 };
 
+// ==========================================
+// PIN Authentication System
+// ==========================================
+const CORRECT_PIN = "011127";
+const pinOverlay = document.getElementById("pinOverlay");
+const appContainer = document.getElementById("appContainer");
+const pinInput = document.getElementById("pinInput");
+const btnPinSubmit = document.getElementById("btnPinSubmit");
+
+function checkAuth() {
+    const isAuth = localStorage.getItem("isAuthenticated");
+    if (isAuth === "true") {
+        pinOverlay.classList.add("hidden");
+        appContainer.style.display = "flex";
+    }
+}
+
+function verifyPin() {
+    if (pinInput.value === CORRECT_PIN) {
+        localStorage.setItem("isAuthenticated", "true");
+        pinOverlay.classList.add("hidden");
+        appContainer.style.display = "flex";
+    } else {
+        Swal.fire({
+            icon: 'error',
+            title: 'รหัสผ่านไม่ถูกต้อง',
+            text: 'กรุณาลองใหม่อีกครั้ง',
+            confirmButtonColor: '#34d399'
+        });
+        pinInput.value = "";
+    }
+}
+
+btnPinSubmit.addEventListener("click", verifyPin);
+pinInput.addEventListener("keypress", function(e) {
+    if (e.key === "Enter") {
+        verifyPin();
+    }
+});
+
+// Run check on load
+checkAuth();
+
+// ==========================================
+// PWA Service Worker Registration
+// ==========================================
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+            .then(reg => console.log('Service Worker Registered!', reg))
+            .catch(err => console.error('Service Worker Registration Failed!', err));
+    });
+}
+
 // Toast notification helper
 function showToast(msg) {
     const toast = document.getElementById("toast");

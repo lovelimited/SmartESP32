@@ -152,6 +152,12 @@ body {
 }
 
 /* Cards */
+.app-content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
 .card {
     background: var(--card-bg);
     backdrop-filter: var(--card-blur);
@@ -641,3 +647,87 @@ input:checked + .slider:before {
     opacity: 1;
     transform: translateX(-50%) translateY(0);
 }
+
+/* PIN Overlay */
+.pin-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: var(--bg-gradient);
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.4s ease;
+}
+
+.pin-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.pin-container {
+    background: #ffffff;
+    padding: 32px;
+    border-radius: var(--radius-lg);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+    text-align: center;
+    max-width: 340px;
+    width: 90%;
+}
+
+.pin-icon {
+    font-size: 48px;
+    color: var(--primary-garden);
+    margin-bottom: 16px;
+}
+
+.pin-container h2 {
+    color: #374151;
+    margin-bottom: 8px;
+    font-size: 1.25rem;
+}
+
+.pin-container p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 24px;
+}
+
+.pin-input {
+    width: 100%;
+    text-align: center;
+    letter-spacing: 12px;
+    font-size: 1.5rem;
+    padding: 12px;
+    border: 2px solid #e5e7eb;
+    border-radius: var(--radius-md);
+    outline: none;
+    transition: var(--transition);
+    margin-bottom: 16px;
+    font-family: monospace;
+}
+
+.pin-input:focus {
+    border-color: var(--primary-garden);
+}
+
+.btn-pin {
+    width: 100%;
+    background: var(--primary-garden);
+    color: #fff;
+    border: none;
+    padding: 14px;
+    border-radius: var(--radius-md);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: 0 4px 12px var(--primary-garden-glow);
+}
+
+.btn-pin:hover {
+    background: #059669;
+    transform: translateY(-2px);
+}
+
