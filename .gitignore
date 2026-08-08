@@ -1,0 +1,8 @@
+# Secrets (WiFi password)
+secrets.h
+
+# Build files
+.pio/
+.vscode/
+*.o
+*.elf

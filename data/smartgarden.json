@@ -1,0 +1,24 @@
+{
+  "smartgarden": {
+    "settings": {
+      "relay1_mode": "AUTO",
+      "relay2_mode": "AUTO"
+    },
+    "schedule": {
+      "relay1": [
+        {
+          "enable": true,
+          "start": 480,
+          "stop": 510
+        }
+      ],
+      "relay2": [
+        {
+          "enable": true,
+          "start": 360,
+          "duration": 15
+        }
+      ]
+    }
+  }
+}

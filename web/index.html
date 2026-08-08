@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Smart Garden V2 - ระบบรดน้ำและน้ำพุอัจฉริยะ</title>
+    
+    <!-- Google Fonts: Prompt & Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- App CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-top">
+                <div class="brand">
+                    <div class="brand-icon">
+                        <i class="fa-solid fa-leaf"></i>
+                    </div>
+                    <div>
+                        <h1>Smart Garden</h1>
+                        <span class="subtitle">ระบบควบคุมสวนและน้ำพุ</span>
+                    </div>
+                </div>
+                <div class="connection-status" id="connectionStatus">
+                    <span class="status-dot offline"></span>
+                    <span class="status-text">กำลังเชื่อมต่อ...</span>
+                </div>
+            </div>
+            
+            <div class="quick-info-bar">
+                <div class="info-item">
+                    <i class="fa-regular fa-clock"></i>
+                    <span id="currentTime">--:--:--</span>
+                </div>
+                <div class="info-item">
+                    <i class="fa-solid fa-wifi"></i>
+                    <span>Firebase Online</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="app-content">
+            
+            <!-- Relay 2: ระบบรดน้ำต้นไม้ -->
+            <section class="card device-card garden-card">
+                <div class="card-header">
+                    <div class="device-title">
+                        <div class="device-icon garden-icon">
+                            <i class="fa-solid fa-shower"></i>
+                        </div>
+                        <div>
+                            <h2>รดน้ำต้นไม้หน้าบ้าน</h2>
+                            <span class="device-sub">Relay 2 - Garden Sprinkler</span>
+                        </div>
+                    </div>
+                    <div class="mode-badge" id="relay2ModeBadge">AUTO</div>
+                </div>
+
+                <!-- Mode Controls -->
+                <div class="mode-control-group">
+                    <label class="control-label">เลือกโหมดการทำงาน:</label>
+                    <div class="btn-toggle-group">
+                        <button class="btn-mode" data-relay="relay2" data-mode="AUTO" id="r2-mode-auto">
+                            <i class="fa-solid fa-robot"></i> AUTO
+                        </button>
+                        <button class="btn-mode btn-on" data-relay="relay2" data-mode="MANUAL_ON" id="r2-mode-on">
+                            <i class="fa-solid fa-power-off"></i> เปิดทำงาน
+                        </button>
+                        <button class="btn-mode btn-off" data-relay="relay2" data-mode="MANUAL_OFF" id="r2-mode-off">
+                            <i class="fa-solid fa-ban"></i> ปิดทำงาน
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Schedule Section -->
+                <div class="schedule-section">
+                    <div class="schedule-header">
+                        <h3><i class="fa-solid fa-calendar-days"></i> ตารางเวลารดน้ำ</h3>
+                        <button class="btn-add-slot" onclick="openAddModal('relay2')">
+                            <i class="fa-solid fa-plus"></i> เพิ่มช่วงเวลา
+                        </button>
+                    </div>
+                    <div class="schedule-list" id="relay2ScheduleList">
+                        <!-- Loaded dynamically -->
+                        <div class="loading-spinner"><i class="fa-solid fa-spinner fa-spin"></i> กำลังโหลดตาราง...</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Relay 1: น้ำพุ -->
+            <section class="card device-card fountain-card">
+                <div class="card-header">
+                    <div class="device-title">
+                        <div class="device-icon fountain-icon">
+                            <i class="fa-solid fa-water-ladder"></i>
+                        </div>
+                        <div>
+                            <h2>ระบบน้ำพุ</h2>
+                            <span class="device-sub">Relay 1 - Fountain Pump</span>
+                        </div>
+                    </div>
+                    <div class="mode-badge" id="relay1ModeBadge">AUTO</div>
+                </div>
+
+                <!-- Mode Controls -->
+                <div class="mode-control-group">
+                    <label class="control-label">เลือกโหมดการทำงาน:</label>
+                    <div class="btn-toggle-group">
+                        <button class="btn-mode" data-relay="relay1" data-mode="AUTO" id="r1-mode-auto">
+                            <i class="fa-solid fa-robot"></i> AUTO
+                        </button>
+                        <button class="btn-mode btn-on" data-relay="relay1" data-mode="MANUAL_ON" id="r1-mode-on">
+                            <i class="fa-solid fa-power-off"></i> เปิดทำงาน
+                        </button>
+                        <button class="btn-mode btn-off" data-relay="relay1" data-mode="MANUAL_OFF" id="r1-mode-off">
+                            <i class="fa-solid fa-ban"></i> ปิดทำงาน
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Schedule Section -->
+                <div class="schedule-section">
+                    <div class="schedule-header">
+                        <h3><i class="fa-solid fa-calendar-days"></i> ตารางเวลาน้ำพุ</h3>
+                        <button class="btn-add-slot" onclick="openAddModal('relay1')">
+                            <i class="fa-solid fa-plus"></i> เพิ่มช่วงเวลา
+                        </button>
+                    </div>
+                    <div class="schedule-list" id="relay1ScheduleList">
+                        <!-- Loaded dynamically -->
+                        <div class="loading-spinner"><i class="fa-solid fa-spinner fa-spin"></i> กำลังโหลดตาราง...</div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- Notification Toast -->
+        <div id="toast" class="toast"></div>
+
+        <!-- Add/Edit Schedule Modal -->
+        <div id="scheduleModal" class="modal">
+            <div class="modal-content card">
+                <div class="modal-header">
+                    <h3 id="modalTitle">เพิ่มตารางเวลา</h3>
+                    <button class="btn-close" onclick="closeModal()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="modalTargetRelay">
+                    <input type="hidden" id="modalEditIndex" value="-1">
+
+                    <div class="form-group">
+                        <label for="startTime">เวลาเริ่มต้น</label>
+                        <input type="time" id="startTime" class="form-control" required value="08:00">
+                    </div>
+
+                    <div class="form-group" id="stopTimeGroup">
+                        <label for="stopTime">เวลาสิ้นสุด</label>
+                        <input type="time" id="stopTime" class="form-control" value="08:30">
+                    </div>
+
+                    <div class="form-group" id="durationGroup">
+                        <label for="durationMin">ระยะเวลาทำงาน (นาที)</label>
+                        <input type="number" id="durationMin" class="form-control" min="1" max="1440" value="10">
+                    </div>
+
+                    <div class="form-group form-switch">
+                        <label for="slotEnable">เปิดใช้งานช่วงเวลานี้</label>
+                        <input type="checkbox" id="slotEnable" checked>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn-cancel" onclick="closeModal()">ยกเลิก</button>
+                    <button class="btn-save" onclick="saveScheduleSlot()">บันทึกข้อมูล</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase App & Database ES Modules -->
+    <script type="module" src="app.js"></script>
+</body>
+</html>

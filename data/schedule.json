@@ -1,0 +1,16 @@
+{
+  "relay1": [
+    {
+      "enable": true,
+      "start": 145,
+      "stop": 148
+    }
+  ],
+  "relay2": [
+    {
+      "enable": true,
+      "start": 145,
+      "stop": 147
+    }
+  ]
+}
