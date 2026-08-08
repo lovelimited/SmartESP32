@@ -43,6 +43,7 @@ let currentSettings = {
 
 let esp32LastSeen = 0;
 let isFirebaseConnected = false;
+let serverTimeOffset = 0;
 
 // DOM Elements
 const connectionStatusEl = document.getElementById("connectionStatus");
@@ -55,7 +56,9 @@ setInterval(() => {
 
     // Check ESP32 Status if Firebase is connected
     if (isFirebaseConnected) {
-        const timeDiff = Date.now() - esp32LastSeen;
+        const estimatedServerTime = Date.now() + serverTimeOffset;
+        const timeDiff = estimatedServerTime - esp32LastSeen;
+        
         if (esp32LastSeen === 0 || timeDiff > 60000) { // 60 seconds timeout
             updateConnectionStatus(false, "ESP32 ขาดการเชื่อมต่อ");
         } else {
@@ -129,6 +132,12 @@ function listenToDatabase() {
         if (snapshot.exists()) {
             esp32LastSeen = snapshot.val();
         }
+    });
+
+    // 4. Server Time Offset listener (Fixes clock drift issues)
+    const offsetRef = ref(db, ".info/serverTimeOffset");
+    onValue(offsetRef, (snapshot) => {
+        serverTimeOffset = snapshot.val() || 0;
     });
 }
 
