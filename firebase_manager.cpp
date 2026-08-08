@@ -339,7 +339,12 @@ void firebaseLoop()
     if (millis() - lastHeartbeat >= HEARTBEAT_INTERVAL || lastHeartbeat == 0)
     {
         lastHeartbeat = millis();
-        Firebase.RTDB.setTimestamp(&fbdo, "/smartgarden/status/last_update");
+        if (Firebase.RTDB.setTimestamp(&fbdo, "/smartgarden/settings/last_update")) {
+            Serial.println("[Firebase] Heartbeat sent");
+        } else {
+            Serial.print("[Firebase] Heartbeat ERROR: ");
+            Serial.println(fbdo.errorReason());
+        }
     }
 
     if (

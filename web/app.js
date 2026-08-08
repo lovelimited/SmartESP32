@@ -123,7 +123,7 @@ function listenToDatabase() {
     });
 
     // 3. Heartbeat listener
-    const statusRef = ref(db, "smartgarden/status/last_update");
+    const statusRef = ref(db, "smartgarden/settings/last_update");
     onValue(statusRef, (snapshot) => {
         if (snapshot.exists()) {
             esp32LastSeen = snapshot.val();
