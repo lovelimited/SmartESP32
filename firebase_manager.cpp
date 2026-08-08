@@ -7,6 +7,8 @@
 
 #include "firebase_config.h"
 #include "scheduler.h"
+#include "relay_control.h"
+#include "relay.h"
 
 
 // =====================================================
@@ -404,6 +406,17 @@ void firebaseSync()
             lastRelay1Mode =
                 mode;
 
+
+            // Apply relay mode
+            setRelay1Mode(
+                stringToMode(mode)
+            );
+
+            if (mode == "MANUAL_ON")
+            {
+                relay1On();
+            }
+
             changed = true;
         }
     }
@@ -448,6 +461,17 @@ void firebaseSync()
 
             lastRelay2Mode =
                 mode;
+
+
+            // Apply relay mode
+            setRelay2Mode(
+                stringToMode(mode)
+            );
+
+            if (mode == "MANUAL_ON")
+            {
+                relay2On();
+            }
 
             changed = true;
         }

@@ -104,11 +104,11 @@ RelayMode stringToMode(
     mode.toUpperCase();
 
 
-    if(mode=="MANUAL")
+    if(mode=="MANUAL" || mode=="MANUAL_ON")
         return MODE_MANUAL;
 
 
-    if(mode=="OFF")
+    if(mode=="OFF" || mode=="MANUAL_OFF")
         return MODE_OFF;
 
 
