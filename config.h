@@ -18,10 +18,9 @@
 //==============================
 // Relay Logic
 //==============================
-// Active LOW Relay Module
-
-#define RELAY_ON       LOW
-#define RELAY_OFF      HIGH
+// Active HIGH Relay Module
+#define RELAY_ON       HIGH
+#define RELAY_OFF      LOW
 
 //==============================
 // Time
